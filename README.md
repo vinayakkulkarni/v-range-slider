@@ -1,57 +1,31 @@
-# Data driven range slider
+# v-range-slider
 
-Add interactivity to your web apps
+<a href="https://github.com/vinayakkulkarni/janak">
+  <img alt="Built with Janak" src="https://img.shields.io/badge/built%20using-janak-brightgreen">
+</a>
 
-[![NPM Version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.0&x2=0)](https://npmjs.org/package/data-driven-range-slider) 
+> Awesome D3 Range slider
 
-<p align="center">
-   <!-- Thanks Vasturiano for this trick -  https://github.com/vasturiano -->
-     <a href="https://observablehq.com/@bumbeishvili/data-driven-range-slider"><img width="80%" src="https://user-images.githubusercontent.com/6873202/81438390-c0372380-917d-11ea-8c50-e3b25923bdc7.gif"></a>
-</p>
+## Features
 
-D3 and svg based data driven range slider, with good performance
+- [Ava](https://ava.li) for unit testing
+- [Prettier](https://http://prettier.io/) & [ESLint](https://eslint.org) to ensure nice linted code
+- [Rollup](https://rollupjs.org/guide/en/) to bundle your awesome v-range-slider
+- [Commitlint](http://commitlint.js.org/) & [Husky](https://github.com/typicode/husky) provide you with githooks so your commits follow [commit convention](https://commitlint.js.org/#/concepts-commit-conventions)
+- [Dependabot](https://github.blog/2020-06-01-keep-all-your-packages-up-to-date-with-dependabot/) support out of the box
+- [Ship.js](https://community.algolia.com/shipjs/) to ensure automated releases & changelog generation
 
-Check out [Introduction](https://dev.to/dbumbeishvili/data-driven-range-slider-introduction-4mj)
+## Usage
 
-Check out examples
-* [Observable example](https://observablehq.com/@bumbeishvili/data-driven-range-slider)  (Most Updated)  
-* [JSFiddle example](https://jsfiddle.net/079nk83L/2/)
-
-Check out several libraries and frameworks integrations
-### Integrations
-* [Vue.js Integration](https://stackblitz.com/edit/data-driven-range-slider-vue-integration)  
-* [React integration](https://stackblitz.com/edit/data-driven-range-slider-react-integration)  
-* [Angular integration](https://stackblitz.com/edit/data-driven-range-slider-angular-integration)  
-
-
-### Installing
-
-```
-npm i data-driven-range-slider
+```bash
+# Installs all required dependencies
+$ npm install
+# Runs the linter - ESLint & Prettier
+$ npm run lint
+# Prepares a new version for your awesome v-range-slider
+$ npm run release:prepare
 ```
 
-### Usage
-```javascript
-const RangeSlider = require ('https://bundle.run/data-driven-range-slider@1.0.0');
+## License
 
-
-new RangeSlider()
-   .container(<myDOMElement>)
-   .data(<myData>)
-   .accessor(d=> d.<myDataPropertyName>)
-   .aggregator(group => group.values.length)
-   .onBrush(d=> /* Handle range values */)
-  
-   .svgWidth(800)
-   .svgHeight(100)
-   .render()
- 
-```
-
-## Author
- [David   B (twitter)](https://twitter.com/dbumbeishvili)  
- [David   B (linkedin)](https://www.linkedin.com/in/bumbeishvili/)  
-
-I am available for freelance data visualization work. Please [contact me](https://davidb.dev/contact) in case you'd like me to help you with my experience and expertise
-
-You can also [book data viz related consultation session](https://www.fiverr.com/share/4XxG21) with me
+MIT &copy; vinayakkulkarni

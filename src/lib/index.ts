@@ -1,18 +1,21 @@
-d3 = window.d3||require('d3');
+const d3 = require('d3');
 
 class RangeSlider {
+  public getChartState: any;
+  public selectAll: any;
+
   constructor() {
     const attrs = {
-      id: "ID" + Math.floor(Math.random() * 1000000),
+      id: 'ID' + Math.floor(Math.random() * 1000000),
       svgWidth: 400,
       svgHeight: 400,
       marginTop: 10,
       marginBottom: 0,
       marginRight: 0,
       marginLeft: 40,
-      container: "body",
-      defaultTextFill: "#2C3E50",
-      defaultFont: "Helvetica",
+      container: 'body',
+      defaultTextFill: '#2C3E50',
+      defaultFont: 'Helvetica',
       data: null,
       accessor: null,
       aggregator: null,
@@ -23,16 +26,15 @@ class RangeSlider {
       yTicks: 4,
       freezeMin: false,
       startSelection: 100,
-      svg:null
+      svg: null,
     };
-
 
     this.getChartState = () => attrs;
 
     Object.keys(attrs).forEach((key) => {
       //@ts-ignore
       this[key] = function (_) {
-        var string = `attrs['${key}'] = _`;
+        const string = `attrs['${key}'] = _`;
         if (!arguments.length) {
           return eval(`attrs['${key}'];`);
         }
@@ -47,14 +49,14 @@ class RangeSlider {
   // Fancy version of d3 join
   initializeEnterExitUpdatePattern() {
     d3.selection.prototype.patternify = function (params) {
-      var container = this;
-      var selector = params.selector;
-      var elementTag = params.tag;
-      var data = params.data || [selector];
+      const container = this;
+      const selector = params.selector;
+      const elementTag = params.tag;
+      const data = params.data || [selector];
 
       // Pattern in action
-      var selection = container.selectAll("." + selector).data(data, (d, i) => {
-        if (typeof d === "object") {
+      let selection = container.selectAll('.' + selector).data(data, (d, i) => {
+        if (typeof d === 'object') {
           if (d.id) {
             return d.id;
           }
@@ -63,7 +65,7 @@ class RangeSlider {
       });
       selection.exit().remove();
       selection = selection.enter().append(elementTag).merge(selection);
-      selection.attr("class", selector);
+      selection.attr('class', selector);
       return selection;
     };
   }
@@ -72,31 +74,31 @@ class RangeSlider {
     const attrs = this.getChartState();
     const calc = attrs.calc;
 
-    //Drawing containers
-    var container = d3.select(attrs.container);
-    var containerRect = container.node().getBoundingClientRect();
+    // Drawing containers
+    const container = d3.select(attrs.container);
+    const containerRect = container.node().getBoundingClientRect();
     if (containerRect.width > 0) attrs.svgWidth = containerRect.width;
 
-    //Add svg
-    var svg = container
+    // Add svg
+    const svg = container
       .patternify({
-        tag: "svg",
-        selector: "svg-chart-container",
+        tag: 'svg',
+        selector: 'svg-chart-container',
       })
-      .style("overflow", "visible")
-      .attr("width", attrs.svgWidth)
-      .attr("height", attrs.svgHeight)
-      .attr("font-family", attrs.defaultFont);
+      .style('overflow', 'visible')
+      .attr('width', attrs.svgWidth)
+      .attr('height', attrs.svgHeight)
+      .attr('font-family', attrs.defaultFont);
 
-    //Add container g element
-    var chart = svg
+    // Add container g element
+    const chart = svg
       .patternify({
-        tag: "g",
-        selector: "chart",
+        tag: 'g',
+        selector: 'chart',
       })
       .attr(
-        "transform",
-        "translate(" + calc.chartLeftMargin + "," + calc.chartTopMargin + ")"
+        'transform',
+        'translate(' + calc.chartLeftMargin + ',' + calc.chartTopMargin + ')',
       );
 
     // Share chart
@@ -110,15 +112,15 @@ class RangeSlider {
     const calc = attrs.calc;
 
     const handlerWidth = 2,
-      handlerFill = "#3F434D",
+      handlerFill = '#3F434D',
       middleHandlerWidth = 10,
-      middleHandlerStroke = "#D4D7DF",
-      middleHandlerFill = "#486878";
+      middleHandlerStroke = '#D4D7DF',
+      middleHandlerFill = '#486878';
 
-    var handle = brush
+    const handle = brush
       .patternify({
-        tag: "g",
-        selector: "custom-handle",
+        tag: 'g',
+        selector: 'custom-handle',
         data: [
           {
             left: true,
@@ -128,70 +130,69 @@ class RangeSlider {
           },
         ],
       })
-      .attr("cursor", "ew-resize")
-      .attr("pointer-events", "all")
-
-
-    handle
-      .patternify({
-        tag: "rect",
-        selector: "custom-handle-rect",
-        data: (d) => [d],
-      })
-      .attr("width", handlerWidth)
-      .attr("height", calc.chartHeight)
-      .attr("fill", handlerFill)
-      .attr("stroke", handlerFill)
-      .attr("y", -calc.chartHeight / 2)
-      .attr("pointer-events", "none");
+      .attr('cursor', 'ew-resize')
+      .attr('pointer-events', 'all');
 
     handle
       .patternify({
-        tag: "rect",
-        selector: "custom-handle-rect-middle",
+        tag: 'rect',
+        selector: 'custom-handle-rect',
         data: (d) => [d],
       })
-      .attr("width", middleHandlerWidth)
-      .attr("height", 30)
-      .attr("fill", middleHandlerFill)
-      .attr("stroke", middleHandlerStroke)
-      .attr("y", -16)
-      .attr("x", -middleHandlerWidth / 4)
-      .attr("pointer-events", "none")
-      .attr("rx", 3);
+      .attr('width', handlerWidth)
+      .attr('height', calc.chartHeight)
+      .attr('fill', handlerFill)
+      .attr('stroke', handlerFill)
+      .attr('y', -calc.chartHeight / 2)
+      .attr('pointer-events', 'none');
 
     handle
       .patternify({
-        tag: "rect",
-        selector: "custom-handle-rect-line-left",
+        tag: 'rect',
+        selector: 'custom-handle-rect-middle',
         data: (d) => [d],
       })
-      .attr("width", 0.7)
-      .attr("height", 20)
-      .attr("fill", middleHandlerStroke)
-      .attr("stroke", middleHandlerStroke)
-      .attr("y", -100 / 6 + 5)
-      .attr("x", -middleHandlerWidth / 4 + 3)
-      .attr("pointer-events", "none");
+      .attr('width', middleHandlerWidth)
+      .attr('height', 30)
+      .attr('fill', middleHandlerFill)
+      .attr('stroke', middleHandlerStroke)
+      .attr('y', -16)
+      .attr('x', -middleHandlerWidth / 4)
+      .attr('pointer-events', 'none')
+      .attr('rx', 3);
 
     handle
       .patternify({
-        tag: "rect",
-        selector: "custom-handle-rect-line-right",
+        tag: 'rect',
+        selector: 'custom-handle-rect-line-left',
         data: (d) => [d],
       })
-      .attr("width", 0.7)
-      .attr("height", 20)
-      .attr("fill", middleHandlerStroke)
-      .attr("stroke", middleHandlerStroke)
-      .attr("y", -100 / 6 + 5)
-      .attr("x", -middleHandlerWidth / 4 + middleHandlerWidth - 3)
-      .attr("pointer-events", "none");
+      .attr('width', 0.7)
+      .attr('height', 20)
+      .attr('fill', middleHandlerStroke)
+      .attr('stroke', middleHandlerStroke)
+      .attr('y', -100 / 6 + 5)
+      .attr('x', -middleHandlerWidth / 4 + 3)
+      .attr('pointer-events', 'none');
 
-    handle.attr("display", "none");
+    handle
+      .patternify({
+        tag: 'rect',
+        selector: 'custom-handle-rect-line-right',
+        data: (d) => [d],
+      })
+      .attr('width', 0.7)
+      .attr('height', 20)
+      .attr('fill', middleHandlerStroke)
+      .attr('stroke', middleHandlerStroke)
+      .attr('y', -100 / 6 + 5)
+      .attr('x', -middleHandlerWidth / 4 + middleHandlerWidth - 3)
+      .attr('pointer-events', 'none');
+
+    handle.attr('display', 'none');
 
     // Share props
-    attrs.handle = handle
+    attrs.handle = handle;
   }
 
   createScales() {
@@ -214,7 +215,12 @@ class RangeSlider {
       .run();
 
     const grouped = groupedInitial.map((d) =>
-      Object.assign(d, { value: typeof attrs.aggregator == "function" ? attrs.aggregator(d) : d.values.length })
+      Object.assign(d, {
+        value:
+          typeof attrs.aggregator == 'function'
+            ? attrs.aggregator(d)
+            : d.values.length,
+      }),
     );
 
     const values = grouped.map((d) => d.value);
@@ -222,15 +228,21 @@ class RangeSlider {
     const maxX = grouped[grouped.length - 1].key;
     const minX = grouped[0].key;
 
-    var minDiff = d3.min(grouped, (d, i, arr) => {
+    const minDiff = d3.min(grouped, (d, i, arr) => {
       if (!i) return Infinity;
       return d.key - arr[i - 1].key;
     });
 
     let eachBarWidth = calc.chartWidth / minDiff / (maxX - minX);
-    if (eachBarWidth > 20) { eachBarWidth = 20; }
-    if (minDiff < 1) { eachBarWidth = eachBarWidth * minDiff; }
-    if (eachBarWidth < 1) { eachBarWidth = 1; }
+    if (eachBarWidth > 20) {
+      eachBarWidth = 20;
+    }
+    if (minDiff < 1) {
+      eachBarWidth = eachBarWidth * minDiff;
+    }
+    if (eachBarWidth < 1) {
+      eachBarWidth = 1;
+    }
 
     const scale = attrs.yScale
       .domain([calc.minY, max])
@@ -261,33 +273,35 @@ class RangeSlider {
     const attrs = this.getChartState();
 
     //Calculated properties
-    var calc = {
+    const calc = {
       id: null,
       chartTopMargin: null,
       chartLeftMargin: null,
       chartWidth: null,
       chartHeight: null,
     };
-    calc.id = "ID" + Math.floor(Math.random() * 1000000); // id for event handlings
+    calc.id = 'ID' + Math.floor(Math.random() * 1000000); // id for event handlings
     calc.chartLeftMargin = attrs.marginLeft;
     calc.chartTopMargin = attrs.marginTop;
     calc.chartWidth = attrs.svgWidth - attrs.marginRight - calc.chartLeftMargin;
-    calc.chartHeight = attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
+    calc.chartHeight =
+      attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
     calc.minY = attrs.yScale ? 0.0001 : 0;
     attrs.calc = calc;
 
-    var accessorFunc = (d) => d;
+    let accessorFunc = (d) => d;
     if (attrs.data[0].value != null) {
       accessorFunc = (d) => d.value;
     }
-    if (attrs.accessor && typeof attrs.accessor == "function") {
+    if (attrs.accessor && typeof attrs.accessor == 'function') {
       accessorFunc = attrs.accessor;
     }
     const dataFinal = attrs.data;
     attrs.accessorFunc = accessorFunc;
-    const isDate = Object.prototype.toString.call(accessorFunc(dataFinal[0])) === "[object Date]";
+    const isDate =
+      Object.prototype.toString.call(accessorFunc(dataFinal[0])) ===
+      '[object Date]';
     attrs.isDate = isDate;
-
 
     var dateExtent,
       dateScale,
@@ -304,14 +318,14 @@ class RangeSlider {
         .range(dateRangesCount)
         .map((d) => [dateScale.invert(d), dateScale.invert(d + 1)]);
     }
-    
+
     attrs.dateScale = dateScale;
     attrs.dataFinal = dataFinal;
     attrs.scaleTime = scaleTime;
 
     this.drawChartTemplate();
-    var chart = attrs.chart;
-    var svg = attrs.svg;
+    const chart = attrs.chart;
+    const svg = attrs.svg;
 
     this.createScales();
     const scaleX = attrs.scaleX;
@@ -321,7 +335,7 @@ class RangeSlider {
     const eachBarWidth = attrs.eachBarWidth;
     const scale = attrs.scale;
 
-    var axis = d3.axisBottom(scaleX);
+    let axis = d3.axisBottom(scaleX);
     if (isDate) {
       axis = d3.axisBottom(scaleTime);
     }
@@ -329,39 +343,39 @@ class RangeSlider {
       .axisLeft(scaleY)
       .tickSize(-calc.chartWidth - 20)
       .ticks(max == 1 ? 1 : attrs.yTicks)
-      .tickFormat(d3.format(".2s"));
+      .tickFormat(d3.format('.2s'));
 
     const bars = chart
-      .patternify({ tag: "rect", selector: "bar", data: grouped })
-      .attr("class", "bar")
-      .attr("pointer-events", "none")
-      .attr("width", eachBarWidth)
-      .attr("height", (d) => scale(d.value))
-      .attr("fill", "#424853")
-      .attr("y", (d) => -scale(d.value) + (calc.chartHeight - 25))
-      .attr("x", (d, i) => scaleX(d.key) - eachBarWidth / 2)
-      .attr("opacity", 0.9);
+      .patternify({ tag: 'rect', selector: 'bar', data: grouped })
+      .attr('class', 'bar')
+      .attr('pointer-events', 'none')
+      .attr('width', eachBarWidth)
+      .attr('height', (d) => scale(d.value))
+      .attr('fill', '#424853')
+      .attr('y', (d) => -scale(d.value) + (calc.chartHeight - 25))
+      .attr('x', (d, i) => scaleX(d.key) - eachBarWidth / 2)
+      .attr('opacity', 0.9);
 
     const xAxisWrapper = chart
-      .patternify({ tag: "g", selector: "x-axis" })
-      .attr("transform", `translate(${0},${calc.chartHeight - 25})`)
+      .patternify({ tag: 'g', selector: 'x-axis' })
+      .attr('transform', `translate(${0},${calc.chartHeight - 25})`)
       .call(axis);
 
     const yAxisWrapper = chart
-      .patternify({ tag: "g", selector: "y-axis" })
-      .attr("transform", `translate(${-10},${0})`)
+      .patternify({ tag: 'g', selector: 'y-axis' })
+      .attr('transform', `translate(${-10},${0})`)
       .call(axisY);
 
-    const brush = chart.patternify({ tag: "g", selector: "brush" }).call(
+    const brush = chart.patternify({ tag: 'g', selector: 'brush' }).call(
       d3
         .brushX()
         .extent([
           [0, 0],
           [calc.chartWidth, calc.chartHeight],
         ])
-        .on("start", brushStarted)
-        .on("end", brushEnded)
-        .on("brush", brushed)
+        .on('start', brushStarted)
+        .on('end', brushEnded)
+        .on('brush', brushed),
     );
 
     attrs.brush = brush;
@@ -369,35 +383,39 @@ class RangeSlider {
     const handle = attrs.handle;
 
     chart
-      .selectAll(".selection")
-      .attr("fill-opacity", 0.1)
-      .attr("fill", "white")
-      .attr("stroke-opacity", 0.4);
+      .selectAll('.selection')
+      .attr('fill-opacity', 0.1)
+      .attr('fill', 'white')
+      .attr('stroke-opacity', 0.4);
 
-
-
+    /**
+     *
+     */
     function brushStarted() {
       if (d3.event.selection) {
         attrs.startSelection = d3.event.selection[0];
       }
     }
 
+    /**
+     *
+     */
     function brushEnded() {
       const attrs = that.getChartState();
-      var minX = attrs.minX;
-      var maxX = attrs.maxX;
+      const minX = attrs.minX;
+      const maxX = attrs.maxX;
 
       if (!d3.event.selection) {
-        handle.attr("display", "none");
+        handle.attr('display', 'none');
 
         output({
           range: [minX, maxX],
         });
         return;
       }
-      if (d3.event.sourceEvent.type === "brush") return;
+      if (d3.event.sourceEvent.type === 'brush') return;
 
-      var d0 = d3.event.selection.map(scaleX.invert),
+      const d0 = d3.event.selection.map(scaleX.invert),
         d1 = d0.map(d3.timeDay.round);
 
       if (d1[0] >= d1[1]) {
@@ -406,19 +424,22 @@ class RangeSlider {
       }
     }
 
+    /**
+     * @param d
+     */
     function brushed(d) {
-      if (d3.event.sourceEvent.type === "brush") return;
+      if (d3.event.sourceEvent.type === 'brush') return;
       if (attrs.freezeMin) {
         if (d3.event.selection[0] < attrs.startSelection) {
           d3.event.selection[1] = Math.min(
             d3.event.selection[0],
-            d3.event.selection[1]
+            d3.event.selection[1],
           );
         }
         if (d3.event.selection[0] >= attrs.startSelection) {
           d3.event.selection[1] = Math.max(
             d3.event.selection[0],
-            d3.event.selection[1]
+            d3.event.selection[1],
           );
         }
 
@@ -426,28 +447,33 @@ class RangeSlider {
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
 
-      var d0 = d3.event.selection.map(scaleX.invert);
+      const d0 = d3.event.selection.map(scaleX.invert);
       const s = d3.event.selection;
 
-      handle.attr("display", null).attr("transform", function (d, i) {
-        return "translate(" + (s[i] - 2) + "," + (calc.chartHeight / 2 - 25) + ")";
+      handle.attr('display', null).attr('transform', function (d, i) {
+        return (
+          'translate(' + (s[i] - 2) + ',' + (calc.chartHeight / 2 - 25) + ')'
+        );
       });
       output({
         range: d0,
       });
     }
 
-    yAxisWrapper.selectAll(".domain").remove();
-    xAxisWrapper.selectAll(".domain").attr("opacity", 0.1);
-    xAxisWrapper.selectAll("text").attr("fill", "#9CA1AE");
-    yAxisWrapper.selectAll("text").attr("fill", "#9CA1AE");
-    svg.selectAll('.selection').attr('transform', 'translate(0,-25)')
+    yAxisWrapper.selectAll('.domain').remove();
+    xAxisWrapper.selectAll('.domain').attr('opacity', 0.1);
+    xAxisWrapper.selectAll('text').attr('fill', '#9CA1AE');
+    yAxisWrapper.selectAll('text').attr('fill', '#9CA1AE');
+    svg.selectAll('.selection').attr('transform', 'translate(0,-25)');
 
     chart
-      .selectAll(".tick line")
-      .attr("opacity", 0.1)
-      .attr("stroke-dasharray", "2 2");
+      .selectAll('.tick line')
+      .attr('opacity', 0.1)
+      .attr('stroke-dasharray', '2 2');
 
+    /**
+     * @param value
+     */
     function output(value) {
       const result = value;
       result.data = getData(result.range);
@@ -457,13 +483,16 @@ class RangeSlider {
       attrs.onBrush(result);
     }
 
+    /**
+     * @param range
+     */
     function getData(range) {
       const dataBars = bars
-        .attr("fill", "#535966")
+        .attr('fill', '#535966')
         .filter((d) => {
           return d.key >= range[0] && d.key <= range[1];
         })
-        .attr("fill", "#72A3B7")
+        .attr('fill', '#72A3B7')
         .nodes()
         .map((d) => d.__data__)
         .map((d) => d.values)
@@ -487,11 +516,11 @@ class RangeSlider {
     const initialData = arr;
     const resultObj = {};
     let resultArr;
-    let sort = function (a, b) {
+    let sort = (a, b) => {
       return a.values.length < b.values.length ? 1 : -1;
     };
 
-    // Group by 
+    // Group by
     this.group.by = function (groupFuncs) {
       const length = arguments.length;
       for (let j = 0; j < initialData.length; j++) {
@@ -507,7 +536,7 @@ class RangeSlider {
         }
         resultObj[strKey].push(dataObj);
       }
-      operations.push("by");
+      operations.push('by');
       return that.group;
     };
 
@@ -516,12 +545,12 @@ class RangeSlider {
       sort = function (a, b) {
         var a = func(a);
         var b = func(b);
-        if (typeof a === "string" || a instanceof String) {
+        if (typeof a === 'string' || a instanceof String) {
           return a.localeCompare(b);
         }
         return a - b;
       };
-      operations.push("orderBy");
+      operations.push('orderBy');
       return that.group;
     };
 
@@ -530,19 +559,19 @@ class RangeSlider {
       sort = function (a, b) {
         var a = func(a);
         var b = func(b);
-        if (typeof a === "string" || a instanceof String) {
+        if (typeof a === 'string' || a instanceof String) {
           return a.localeCompare(b);
         }
         return b - a;
       };
-      operations.push("orderByDescending");
+      operations.push('orderByDescending');
       return that.group;
     };
 
     // Custom sort
     this.group.sort = function (v) {
       sort = v;
-      operations.push("sort");
+      operations.push('sort');
       return that.group;
     };
 
@@ -567,9 +596,7 @@ class RangeSlider {
     };
 
     return this.group;
-  };
+  }
 }
 
- 
-typeof module!='undefined' && (module.exports = RangeSlider);
-
+typeof module != 'undefined' && (module.exports = RangeSlider);
