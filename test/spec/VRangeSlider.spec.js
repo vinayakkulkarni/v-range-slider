@@ -1,12 +1,12 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import VRangeSlider from '@/src/components/VRangeSlider.vue';
+import { createLocalVue, mount } from '@vue/test-utils';
 import test from 'ava';
-import Package from '@/src/Package.vue';
 
 let wrapper;
 const localVue = createLocalVue();
 
 test.beforeEach(() => {
-  wrapper = mount(Package, {
+  wrapper = mount(VRangeSlider, {
     localVue,
   });
 });

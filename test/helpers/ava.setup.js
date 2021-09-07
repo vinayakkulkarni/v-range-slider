@@ -14,7 +14,7 @@ const Vue = require('vue');
 Vue.config.productionTip = false;
 
 // Setup vue files to be processed by `require-extension-hooks-vue`
-hooks('vue').plugin('vue').push();
+hooks(['vue', 'ts']).plugin('vue').push();
 // Setup vue, js and ts files to be processed by `require-extension-hooks-babel`
 hooks(['vue', 'js', 'ts'])
   .exclude(({ filename }) => filename.match(/\/node_modules\//))

@@ -1,10 +1,10 @@
 module.exports = {
   require: ['./test/helpers/ava.setup.js'],
   files: ['./test/spec/**/*'],
-  ignoredByWatcher: ['!**/*.{js,vue}'],
+  ignoredByWatcher: ['!**/*.{js,vue,ts}'],
   snapshotDir: './test/snapshot',
   babel: true,
-  tap: true,
+  tap: false,
   verbose: true,
   color: true,
 };
