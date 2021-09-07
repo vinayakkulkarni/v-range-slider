@@ -1,4 +1,4 @@
-name: Ship js trigger
+name: Ship js trigger (v1)
 on:
   pull_request:
     types:
@@ -16,7 +16,18 @@ jobs:
           ref: main
 
       - name: Setup node env 📦
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: 16
+          check-latest: true
+          registry-url: 'https://npm.pkg.github.com'
+          cache: 'npm'
+          
+      - name: Upgrade npm 🎉
+        run: npm install -g npm@latest
+
+      - name: Install dependencies 🚀
+        run: npm ci --prefer-offline --no-audit --no-optional
 
       - name: Perform a new release 🚨
         run: npx shipjs trigger

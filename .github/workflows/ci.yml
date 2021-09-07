@@ -4,37 +4,74 @@ on:
   push:
     branches:
       - main
-  pull_request:
+      - next
+  pull_request_target:
     branches:
       - main
+      - next
+
+permissions:
+  checks: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ci:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node: [16]
 
     steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@master
+      - name: Check out repository ✨
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+        uses: actions/checkout@v2
 
-      - name: Setup node environment 🏗
-        uses: actions/setup-node@v2.3.0
+      - name: Check out repository 🎉 (dependabot)
+        if: ${{ github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]' }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup node env 📦
+        uses: actions/setup-node@v2.4.0
         with:
           node-version: ${{ matrix.node }}
-          registry-url: https://registry.npmjs.org/
           check-latest: true
-          cache: 'npm'
+          registry-url: https://registry.npmjs.org
+          cache: 'npm' 
 
-      - name: Install dependencies 📦
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Upgrade npm 🎉
+        run: npm install -g npm@latest
+
+      - name: Install dependencies 🚀
         run: npm ci --prefer-offline --no-audit --no-optional
 
-      - name: Run linter 👀
-        run: npm run lint
+      - name: Run linter(s) 👀
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          continue_on_error: false
+          git_name: github-actions[bot]
+          git_email: github-actions[bot]@users.noreply.github.com
+          auto_fix: false
+          neutral_check_on_warning: true
+          stylelint: true
+          stylelint_extensions: css,scss,vue
+          eslint: true
+          eslint_extensions: js,ts,vue
+          eslint_config: .eslintrc.js
+          prettier: true
+          prettier_extensions: js,ts,vue
 
-      - name: Run tests 🧪
-        run: npm run test
+      - name: Run tests 🏃‍♂️
+        run: npm test
+
+      - name: Build the package 🎉
+        run: npm run build
